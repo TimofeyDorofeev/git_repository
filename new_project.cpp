@@ -1,4 +1,4 @@
- задание 3
+задание 3
 
 #include <iostream>
 
