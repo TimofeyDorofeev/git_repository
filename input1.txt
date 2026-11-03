@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 theplanetisheatingupandwereallgonnafuckingdie
+=======
+theplanetisheatingupandwereallgonnafuckingdie
+>>>>>>> 2a7b3653873c625e70034611ae807abca3421aaf
