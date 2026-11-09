@@ -4,7 +4,7 @@
 #include <iostream>  
 using namespace std;
 
-int a[1000];          // калорийность пирожков 
+int a[1000];          
 
 
 int countDays(int n, int x) {
