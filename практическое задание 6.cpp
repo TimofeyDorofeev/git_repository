@@ -39,18 +39,15 @@ using namespace std;
 int main() {
     int n, m, w;
     cin >> n >> m >> w;  
-    
-    // Создаем карту
+
     char map[33][33] = {0};
     
-    // Отмечаем грибы
     for(int i = 0; i < w; i++) {
         int x, y;
         cin >> x >> y;
         map[x][y] = '*';
     }
     
-    // Считаем грибы вокруг
     for(int i = 1; i <= n; i++) {
         for(int j = 1; j <= m; j++) {
             if(map[i][j] != '*') {  // Если не гриб
