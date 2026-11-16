@@ -1,0 +1,176 @@
+// задание 1
+
+
+#include <iostream>              
+using namespace std;             
+
+int main() {
+    char s[1001];                // строка
+    cin.getline(s, 1001);        
+
+    char st[1001];               
+    int top = 0;                 // сколько скобок сейчас в стеке
+    bool ok = true;              // пока считаем, что последовательность правильная
+
+    for (int i = 0; s[i] != '\0' && ok; i++) { 
+        char c = s[i];           // текущий символ
+
+        if (c == '(' || c == '[' || c == '{') {
+            st[top++] = c;       
+        } else if (c == ')' || c == ']' || c == '}') {
+            if (top == 0) {      
+                ok = false;      
+            } else {
+                char open = st[--top]; 
+                if ((c == ')' && open != '(') || 
+                    (c == ']' && open != '[') ||
+                    (c == '}' && open != '{'))
+                    ok = false;  // открыли '(' а закрыли ']' — ошибка
+            }
+        }
+        
+    }
+
+    if (ok && top == 0)          
+        cout << "yes";           
+    else
+        cout << "no";            
+
+    return 0;                    
+}
+
+
+// задание 2
+
+#include <iostream>
+using namespace std;
+
+int main() {
+    char words[1000][1001];      
+    int n = 0;                   
+    char line[10001];            
+
+    while (cin.getline(line, 10001)) { 
+        char word[1001];         
+        int len = 0;            
+
+        for (int i = 0; ; i++) { // идём по символам строки
+            char c = line[i];    // текущий символ
+
+            bool letter = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
+                          (c >= 'а' && c <= 'я') || (c >= 'А' && c <= 'Я') ||
+                          c == 'ё' || c == 'Ё' || c == '-';
+
+            if (letter) {
+                if (c >= 'A' && c <= 'Z') c = c + 32; 
+                                                     
+                if (c >= 'А' && c <= 'Я') c = c + 32; 
+                if (c == 'Ё') c = 'ё';                
+
+                if (c == '-' && len == 0) continue;   
+                word[len++] = c;                      
+            }
+
+        
+            if (!letter || c == '\0') {
+                if (len > 0 && word[len - 1] == '-') len--; 
+                if (len > 0) {                        
+                    word[len] = '\0';                 
+                    
+                    // посимвольно сравниваем слова
+                    bool found = false;               
+                    for (int j = 0; j < n; j++) {     
+                        bool same = true;             
+                        for (int k = 0; word[k] != '\0' || words[j][k] != '\0'; k++)
+                            if (word[k] != words[j][k]) { 
+                                same = false;             
+                                break;                    
+                            }
+                        if (same) { found = true; break; } 
+                    }
+
+                    if (!found) {                     
+                        for (int k = 0; k <= len; k++)
+                            words[n][k] = word[k];    // копируем слово в хранилище
+                        n++;                          // увеличиваем счётчик уникальных слов
+                    }
+                }
+                len = 0;                              // начинаем собирать следующее слово с нуля
+                if (c == '\0') break;                 // если строка кончилась — выходим из цикла
+            }
+        }
+    }
+
+    for (int i = 0; i < n; i++)  
+        cout << words[i] << "\n";
+
+    return 0;
+}
+
+
+// задание 3
+
+#include <iostream>
+using namespace std;
+
+// вспомогательная функция: сравнивает две строки посимвольно
+bool eq(const char* a, const char* b) {
+    int i = 0;                                  
+    while (a[i] != '\0' && b[i] != '\0' && a[i] == b[i])
+        i++;                                    
+    return a[i] == b[i] && a[i] == '\0';        
+}
+
+class MinStack {
+    int data[100000];   // основной стек: сами значения (до 100000 элементов)
+    int mins[100000];   // параллельный стек: mins[i] = минимум среди data[0..i]
+    int top = 0;        // сколько элементов сейчас в стеке
+
+public:
+    void push(int x) {                        // добавить элемент на вершину
+        if (top == 0)                         // если стек пуст,
+            mins[top] = x;                    // минимум — это сам добавленный элемент
+        else
+            mins[top] = (x < mins[top - 1]) ? x : mins[top - 1];
+            // иначе минимум = min(новый элемент, минимум предыдущего уровня)
+        data[top++] = x;                      // кладём значение в стек и увеличиваем top
+    }
+
+    int pop() {                               // извлечь элемент с вершины
+        return data[--top];                   // уменьшаем top и возвращаем, что лежало сверху
+    }
+
+    int getMin() {                            // узнать минимум за O(1)
+        return mins[top - 1];                 // он уже посчитан — просто смотрим на вершину mins
+    }
+
+    bool empty() {                            // пустой ли стек
+        return top == 0;                      // пустой, если в нём 0 элементов
+    }
+};
+
+int main() {
+    MinStack st;                 // создаём наш стек
+    char cmd[20];                // буфер под команду
+
+    while (cin >> cmd) {         // читаем команды по одной, пока ввод не кончился
+        if (eq(cmd, "push")) {   // команда push
+            int x;
+            cin >> x;            // читаем число, которое надо добавить
+            st.push(x);
+        } else if (eq(cmd, "pop")) {  // команда pop
+            if (!st.empty())          // извлекаем, только если стек не пуст
+                st.pop();
+            else
+                cout << "stack is empty\n"; // иначе сообщаем об ошибке
+        } else if (eq(cmd, "min")) {  // команда min
+            if (!st.empty())
+                cout << st.getMin() << "\n";    // печатаем текущий минимум
+            else
+                cout << "stack is empty\n";
+        } else if (eq(cmd, "empty")) { // команда empty
+            cout << (st.empty() ? "yes" : "no") << "\n"; // yes — пуст, no — нет
+        }
+    }
+    return 0;
+}
