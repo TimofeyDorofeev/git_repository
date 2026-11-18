@@ -113,7 +113,6 @@ int main() {
 #include <iostream>
 using namespace std;
 
-// вспомогательная функция: сравнивает две строки посимвольно
 bool eq(const char* a, const char* b) {
     int i = 0;                                  
     while (a[i] != '\0' && b[i] != '\0' && a[i] == b[i])
@@ -122,54 +121,53 @@ bool eq(const char* a, const char* b) {
 }
 
 class MinStack {
-    int data[100000];   // основной стек: сами значения (до 100000 элементов)
-    int mins[100000];   // параллельный стек: mins[i] = минимум среди data[0..i]
-    int top = 0;        // сколько элементов сейчас в стеке
+    int data[100000];   // основной стек
+    int mins[100000];   
+    int top = 0;        
 
 public:
-    void push(int x) {                        // добавить элемент на вершину
-        if (top == 0)                         // если стек пуст,
-            mins[top] = x;                    // минимум — это сам добавленный элемент
+    void push(int x) {                       
+        if (top == 0)                         
+            mins[top] = x;                    
         else
             mins[top] = (x < mins[top - 1]) ? x : mins[top - 1];
-            // иначе минимум = min(новый элемент, минимум предыдущего уровня)
-        data[top++] = x;                      // кладём значение в стек и увеличиваем top
+        data[top++] = x;                      
     }
 
-    int pop() {                               // извлечь элемент с вершины
-        return data[--top];                   // уменьшаем top и возвращаем, что лежало сверху
+    int pop() {                               
+        return data[--top];                   
     }
 
-    int getMin() {                            // узнать минимум за O(1)
-        return mins[top - 1];                 // он уже посчитан — просто смотрим на вершину mins
+    int getMin() {                            
+        return mins[top - 1];                 
     }
 
-    bool empty() {                            // пустой ли стек
-        return top == 0;                      // пустой, если в нём 0 элементов
+    bool empty() {                            
+        return top == 0;                      
     }
 };
 
 int main() {
-    MinStack st;                 // создаём наш стек
-    char cmd[20];                // буфер под команду
+    MinStack st;                 
+    char cmd[20];                
 
-    while (cin >> cmd) {         // читаем команды по одной, пока ввод не кончился
-        if (eq(cmd, "push")) {   // команда push
+    while (cin >> cmd) {         
+        if (eq(cmd, "push")) {   
             int x;
-            cin >> x;            // читаем число, которое надо добавить
+            cin >> x;            
             st.push(x);
-        } else if (eq(cmd, "pop")) {  // команда pop
-            if (!st.empty())          // извлекаем, только если стек не пуст
+        } else if (eq(cmd, "pop")) {  
+            if (!st.empty())          
                 st.pop();
             else
-                cout << "stack is empty\n"; // иначе сообщаем об ошибке
-        } else if (eq(cmd, "min")) {  // команда min
+                cout << "stack is empty\n"; 
+        } else if (eq(cmd, "min")) {  
             if (!st.empty())
-                cout << st.getMin() << "\n";    // печатаем текущий минимум
+                cout << st.getMin() << "\n";    
             else
                 cout << "stack is empty\n";
-        } else if (eq(cmd, "empty")) { // команда empty
-            cout << (st.empty() ? "yes" : "no") << "\n"; // yes — пуст, no — нет
+        } else if (eq(cmd, "empty")) { 
+            cout << (st.empty() ? "yes" : "no") << "\n"; 
         }
     }
     return 0;
