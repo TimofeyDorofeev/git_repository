@@ -148,7 +148,6 @@ int main() {
 
     size_t i = 0;
     while (i < line.size()) {
-        // Ручная проверка: символ — цифра? (без <cctype>)
         if (line[i] >= '0' && line[i] <= '9') {
             size_t start = i;
             // Собираем всё число подряд
@@ -159,7 +158,6 @@ int main() {
             string binStr = toBinary(numStr);
             outFile << binStr;
         } else {
-            // Не цифра — просто копируем символ
             outFile.put(line[i]);
             ++i;
         }
